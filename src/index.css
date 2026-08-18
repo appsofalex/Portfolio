@@ -1,111 +1,118 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
 :root {
-  --text: #6b6375;
-  --text-h: #08060d;
-  --bg: #fff;
-  --border: #e5e4e7;
-  --code-bg: #f4f3ec;
-  --accent: #aa3bff;
-  --accent-bg: rgba(170, 59, 255, 0.1);
-  --accent-border: rgba(170, 59, 255, 0.5);
-  --social-bg: rgba(244, 243, 236, 0.5);
-  --shadow:
-    rgba(0, 0, 0, 0.1) 0 10px 15px -3px, rgba(0, 0, 0, 0.05) 0 4px 6px -2px;
+  --background: #ffffff;
+  --foreground: #0a0a0a;
+  --card: #ffffff;
+  --shimmer-button-bg: #ffffff;
+  --shimmer-color: #000000;
+  color-scheme: light;
 
-  --sans: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --heading: system-ui, 'Segoe UI', Roboto, sans-serif;
-  --mono: ui-monospace, Consolas, monospace;
-
-  font: 18px/145% var(--sans);
-  letter-spacing: 0.18px;
-  color-scheme: light dark;
-  color: var(--text);
-  background: var(--bg);
-  font-synthesis: none;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-
-  @media (max-width: 1024px) {
-    font-size: 16px;
-  }
+  /* Resting fan geometry. --site-max-width is the AABB of the outermost cards. */
+  --fan-card-h: 28rem;
+  --fan-screen-w: 171.98;
+  --fan-screen-h: 374.37;
+  --fan-card-w: calc(var(--fan-card-h) * var(--fan-screen-w) / var(--fan-screen-h));
+  --fan-spread: 30;
+  --fan-outer-rot: 21deg;
+  --fan-outer-scale: 0.7756;
+  --fan-multiplier: 1;
+  --fan-corner-extent: calc(
+    (var(--fan-card-w) * var(--fan-outer-scale) / 2) * cos(var(--fan-outer-rot)) +
+      (var(--fan-card-h) * var(--fan-outer-scale) / 2) * sin(var(--fan-outer-rot))
+  );
+  --site-max-width: calc(
+    2 *
+      (
+        var(--fan-spread) * 1rem * var(--fan-multiplier) +
+          var(--fan-corner-extent)
+      )
+  );
 }
 
-@media (prefers-color-scheme: dark) {
+.dark {
+  --background: #000000;
+  --foreground: #ffffff;
+  --card: #0a0a0a;
+  --shimmer-button-bg: #000000;
+  --shimmer-color: #ffffff;
+  color-scheme: dark;
+}
+
+@theme inline {
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --animate-shimmer-slide: shimmer-slide var(--speed) ease-in-out infinite
+    alternate;
+  --animate-spin-around: spin-around calc(var(--speed) * 2) infinite linear;
+}
+
+@media (max-width: 1023px) {
   :root {
-    --text: #9ca3af;
-    --text-h: #f3f4f6;
-    --bg: #16171d;
-    --border: #2e303a;
-    --code-bg: #1f2028;
-    --accent: #c084fc;
-    --accent-bg: rgba(192, 132, 252, 0.15);
-    --accent-border: rgba(192, 132, 252, 0.5);
-    --social-bg: rgba(47, 48, 58, 0.5);
-    --shadow:
-      rgba(0, 0, 0, 0.4) 0 10px 15px -3px, rgba(0, 0, 0, 0.25) 0 4px 6px -2px;
-  }
-
-  #social .button-icon {
-    filter: invert(1) brightness(2);
+    --fan-card-h: 21rem;
+    --fan-multiplier: 0.75;
   }
 }
 
+@media (max-width: 767px) {
+  :root {
+    --fan-card-h: 14rem;
+    --fan-multiplier: 0.5;
+  }
+}
+
+@media (max-width: 639px) {
+  :root {
+    --fan-card-h: 10.5rem;
+    --fan-multiplier: 0.38;
+  }
+}
+
+@media (max-width: 479px) {
+  :root {
+    --fan-card-h: 8rem;
+    --fan-multiplier: 0.28;
+  }
+}
+
+html,
+body,
 #root {
-  width: 1126px;
-  max-width: 100%;
-  margin: 0 auto;
-  text-align: center;
-  border-inline: 1px solid var(--border);
-  min-height: 100svh;
-  display: flex;
-  flex-direction: column;
-  box-sizing: border-box;
+  min-height: 100%;
+  background-color: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
 }
 
-body {
-  margin: 0;
+.site-frame {
+  width: 100%;
+  max-width: var(--site-max-width);
+  margin-inline: auto;
 }
 
-h1,
-h2 {
-  font-family: var(--heading);
-  font-weight: 500;
-  color: var(--text-h);
-}
-
-h1 {
-  font-size: 56px;
-  letter-spacing: -1.68px;
-  margin: 32px 0;
-  @media (max-width: 1024px) {
-    font-size: 36px;
-    margin: 20px 0;
+@keyframes shimmer-slide {
+  to {
+    transform: translate(calc(100cqw - 100%), 0);
   }
 }
-h2 {
-  font-size: 24px;
-  line-height: 118%;
-  letter-spacing: -0.24px;
-  margin: 0 0 8px;
-  @media (max-width: 1024px) {
-    font-size: 20px;
+
+@keyframes spin-around {
+  0% {
+    transform: translateZ(0) rotate(0);
   }
-}
-p {
-  margin: 0;
-}
-
-code,
-.counter {
-  font-family: var(--mono);
-  display: inline-flex;
-  border-radius: 4px;
-  color: var(--text-h);
-}
-
-code {
-  font-size: 15px;
-  line-height: 135%;
-  padding: 4px 8px;
-  background: var(--code-bg);
+  15%,
+  35% {
+    transform: translateZ(0) rotate(90deg);
+  }
+  65%,
+  85% {
+    transform: translateZ(0) rotate(270deg);
+  }
+  100% {
+    transform: translateZ(0) rotate(360deg);
+  }
 }

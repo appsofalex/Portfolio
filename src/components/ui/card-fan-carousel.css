@@ -1,0 +1,168 @@
+.fan-work {
+  --fan-layout-h: 35rem;
+}
+
+.fan-work--iphone {
+  --fan-stack-gap: calc(
+    var(--fan-layout-h) / 2 - (var(--fan-card-h) * 400 / 374.37) / 2
+  );
+}
+
+.fan-work--android {
+  --fan-stack-gap: calc(
+    var(--fan-layout-h) / 2 - (var(--fan-card-h) * 400 / 378) / 2
+  );
+}
+
+.fan-work-controls {
+  margin-top: var(--fan-stack-gap);
+}
+
+.fan-layout {
+  height: var(--fan-layout-h);
+  --card-h: var(--fan-card-h);
+  --card-w: calc(var(--card-h) * var(--screen-w) / var(--screen-h));
+  --screen-r: calc(var(--card-w) * var(--screen-rx) / var(--screen-w));
+  --frame-w: calc(var(--card-w) * var(--frame-vb-w) / var(--screen-w));
+  --frame-h: calc(var(--card-h) * var(--frame-vb-h) / var(--screen-h));
+  --frame-x: calc(var(--card-w) * -1 * var(--screen-x) / var(--screen-w));
+  --frame-y: calc(var(--card-h) * -1 * var(--screen-y) / var(--screen-h));
+}
+
+.fan-layout--iphone {
+  --frame-vb-w: 200;
+  --frame-vb-h: 400;
+  --screen-x: 14.08;
+  --screen-y: 12.81;
+  --screen-w: 171.98;
+  --screen-h: 374.37;
+  --screen-rx: 24.62;
+}
+
+.fan-layout--android {
+  --frame-vb-w: 200;
+  --frame-vb-h: 400;
+  --screen-x: 11;
+  --screen-y: 11;
+  --screen-w: 178;
+  --screen-h: 378;
+  --screen-rx: 14;
+}
+
+.fan-card {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: var(--card-w);
+  height: var(--card-h);
+  margin-left: calc(var(--card-w) / -2);
+  margin-top: calc(var(--card-h) / -2);
+  overflow: hidden;
+  border: 0;
+  padding: 0;
+  appearance: none;
+  background: transparent;
+  color: inherit;
+  cursor: pointer;
+  border-radius: var(--screen-r);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  will-change: transform;
+  transition:
+    width 300ms ease,
+    margin-left 300ms ease,
+    border-radius 300ms ease;
+}
+
+.fan-card:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: 4px;
+}
+
+.fan-card img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+@media (max-width: 1023px) {
+  .fan-work {
+    --fan-layout-h: 31rem;
+  }
+
+  .fan-layout {
+    height: var(--fan-layout-h);
+  }
+}
+
+@media (max-width: 767px) {
+  .fan-work {
+    --fan-layout-h: 25rem;
+  }
+
+  .fan-layout {
+    height: var(--fan-layout-h);
+  }
+}
+
+@media (max-width: 639px) {
+  .fan-work {
+    --fan-layout-h: 23rem;
+  }
+
+  .fan-layout {
+    height: var(--fan-layout-h);
+  }
+}
+
+@media (max-width: 479px) {
+  .fan-work {
+    --fan-layout-h: 19.5rem;
+  }
+
+  .fan-layout {
+    height: var(--fan-layout-h);
+  }
+}
+
+.fan-card--device {
+  overflow: visible;
+  background: transparent;
+  box-shadow: none;
+}
+
+.device-screen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: inherit;
+}
+
+.device-frame {
+  position: absolute;
+  left: var(--frame-x);
+  top: var(--frame-y);
+  width: var(--frame-w);
+  height: var(--frame-h);
+  pointer-events: none;
+  z-index: 20;
+  filter: drop-shadow(0 12px 32px rgba(0, 0, 0, 0.35));
+}
+
+.fan-layout--iphone .device-frame .iphone-screen-image {
+  transform-box: fill-box;
+  transform-origin: center;
+  transform: scale(
+    calc(1 + 2px / var(--card-w)),
+    calc(1 + 2px / var(--card-h))
+  );
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .fan-card {
+    will-change: auto;
+    transition: none;
+  }
+}

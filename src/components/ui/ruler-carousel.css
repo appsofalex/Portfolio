@@ -1,0 +1,23 @@
+.ruler-carousel-fade {
+  --ruler-fade: 12%;
+  mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 var(--ruler-fade),
+    #000 calc(100% - var(--ruler-fade)),
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to right,
+    transparent 0%,
+    #000 var(--ruler-fade),
+    #000 calc(100% - var(--ruler-fade)),
+    transparent 100%
+  );
+}
+
+@media (min-width: 768px) {
+  .ruler-carousel-fade {
+    --ruler-fade: 8%;
+  }
+}

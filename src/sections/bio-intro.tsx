@@ -1,8 +1,8 @@
 import { useMemo, type ReactNode } from "react"
-import { animate } from "motion"
 import { motion, useReducedMotion } from "motion/react"
 
 import { useTypewriter } from "@/components/ui/typewriter"
+import { scrollElementIntoCenter } from "@/lib/programmatic-scroll"
 import { cn } from "@/lib/utils"
 
 type BioSegment =
@@ -50,25 +50,9 @@ const PARAGRAPHS: BioSegment[][] = [
         " and competed for England U20 in track and field - then spent time at ",
     },
     {
-      kind: "link",
-      content: "1000heads",
-      href: "https://1000heads.com/",
-    },
-    { kind: "text", content: " working with " },
-    {
-      kind: "link",
-      content: "Google",
-      href: "https://www.google.com/",
-    },
-    { kind: "text", content: " and " },
-    {
-      kind: "link",
-      content: "Amazon",
-      href: "https://www.amazon.com/",
-    },
-    {
       kind: "text",
-      content: " before deciding I'd rather build the ",
+      content:
+        "1000heads working with Google and Amazon before deciding I'd rather build the ",
     },
     {
       kind: "link",
@@ -156,44 +140,7 @@ function scrollToMyWork() {
   const section = document.getElementById("my-work")
   if (!section) return
 
-  const sectionTop = section.getBoundingClientRect().top + window.scrollY
-  const topInset = Math.max(48, window.innerHeight * 0.065)
-  let to = sectionTop - topInset
-
-  const bio = document.getElementById("bio-intro")
-  if (bio) {
-    const bioBottom = bio.getBoundingClientRect().bottom + window.scrollY
-    to = Math.max(to, bioBottom + 20)
-  }
-
-  const productHeading = document.getElementById("product-carousel-heading")
-  if (productHeading) {
-    const productTop =
-      productHeading.getBoundingClientRect().top + window.scrollY
-    const maxTo = productTop - window.innerHeight - 12
-    to = Math.min(to, maxTo)
-  }
-
-  const maxScroll = Math.max(
-    0,
-    document.documentElement.scrollHeight - window.innerHeight,
-  )
-  to = Math.min(maxScroll, Math.max(0, to))
-
-  if (Math.abs(to - window.scrollY) < 12) return
-
-  if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-    window.scrollTo(0, to)
-    return
-  }
-
-  animate(window.scrollY, to, {
-    duration: 1.25,
-    ease: [0.16, 1, 0.3, 1],
-    onUpdate: (latest) => {
-      window.scrollTo(0, latest)
-    },
-  })
+  scrollElementIntoCenter(section)
 }
 
 function getActiveParagraphIndex(

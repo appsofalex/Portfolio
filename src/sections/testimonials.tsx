@@ -1,46 +1,41 @@
-import { AnimatedTestimonials } from "@/components/ui/animated-testimonials"
+import {
+  UniqueTestimonials,
+  type UniqueTestimonial,
+} from "@/components/ui/unique-testimonial"
+import richardAdamsAvatar from "@/assets/testimonials/richard-adams.jpg"
+import heleneLeRouxAvatar from "@/assets/testimonials/helene-le-roux.jpg"
 
-const TESTIMONIALS = [
+const TESTIMONIALS: UniqueTestimonial[] = [
   {
-    quote:
-      "The attention to detail and innovative features have completely transformed our workflow. This is exactly what we've been looking for.",
-    name: "Sarah Chen",
-    designation: "Product Manager at TechFlow",
-    src: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=1200&auto=format&fit=crop",
+    id: 1,
+    quote: "This changed everything for me.",
+    author: "Sarah Chen",
+    role: "Designer at Figma",
+    avatar:
+      "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?q=80&w=200&auto=format&fit=crop",
   },
   {
+    id: 2,
     quote:
-      "Implementation was seamless and the results exceeded our expectations. The platform's flexibility is remarkable.",
-    name: "Michael Rodriguez",
-    designation: "CTO at InnovateSphere",
-    src: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?q=80&w=1200&auto=format&fit=crop",
+      "Alex has a unique design instinct, with a clear vision for turning ideas into something people immediately understand and want.",
+    author: "Richard Adams",
+    role: "CEO at Trinity Cups",
+    avatar: richardAdamsAvatar,
   },
   {
+    id: 3,
     quote:
-      "This solution has significantly improved our team's productivity. The intuitive interface makes complex tasks simple.",
-    name: "Emily Watson",
-    designation: "Operations Director at CloudScale",
-    src: "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    quote:
-      "Outstanding support and robust features. It's rare to find a product that delivers on all its promises.",
-    name: "James Kim",
-    designation: "Engineering Lead at DataPro",
-    src: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=1200&auto=format&fit=crop",
-  },
-  {
-    quote:
-      "The scalability and performance have been game-changing for our organization. Highly recommend to any growing business.",
-    name: "Lisa Thompson",
-    designation: "VP of Technology at FutureNet",
-    src: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?q=80&w=1200&auto=format&fit=crop",
+      "He doesn’t just have great ideas. Alex designs them, builds them and makes them happen. Trippin’ wouldn’t be what it is without him.",
+    author: "Helene le Roux",
+    role: "Founder & CEO at Trippin'",
+    avatar: heleneLeRouxAvatar,
   },
 ]
 
 export function Testimonials() {
   return (
     <section
+      id="testimonials"
       aria-labelledby="testimonials-heading"
       className="relative z-10 w-full pb-24 pt-8 md:pb-32 md:pt-12"
     >
@@ -50,7 +45,7 @@ export function Testimonials() {
       >
         Testimonials
       </h2>
-      <AnimatedTestimonials testimonials={TESTIMONIALS} />
+      <UniqueTestimonials testimonials={TESTIMONIALS} />
     </section>
   )
 }

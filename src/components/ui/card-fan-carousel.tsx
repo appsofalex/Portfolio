@@ -1,14 +1,18 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
 import { ChevronLeft, ChevronRight } from "lucide-react";
-import { animate } from "motion";
 import { AnimatePresence, motion, useReducedMotion } from "motion/react";
 import { DeviceToggle, type DeviceType } from "@/components/common/device-toggle";
 import { AppStoreLogo } from "@/components/common/app-store-logo";
 import { Iphone16Pro } from "@/components/ui/iphone-16-pro";
 import { Pixel10Pro } from "@/components/ui/pixel-10-pro";
 import { ShimmerButton } from "@/components/ui/shimmer-button";
+import { scrollElementIntoCenter } from "@/lib/programmatic-scroll";
+import statusBarBlack from "@/assets/iphone/status-bar-black.webp";
+import statusBarWhite from "@/assets/iphone/status-bar-white.webp";
 import "./card-fan-carousel.css";
+
+export type IphoneStatusBar = "black" | "white";
 
 export interface CardItem {
   imgUrl: string;
@@ -18,6 +22,8 @@ export interface CardItem {
   iosStoreUrl?: string;
   androidStoreUrl?: string;
   linkUrl?: string;
+  /** iPhone-only overlay for the centered device frame. */
+  statusBar?: IphoneStatusBar;
 }
 
 interface SocialCardsProps {
@@ -147,41 +153,9 @@ export default function SocialCards({ cards }: SocialCardsProps) {
     const section = sectionRef.current;
     if (!section) return;
 
-    const sectionTop = section.getBoundingClientRect().top + window.scrollY;
-    const topInset = Math.max(48, window.innerHeight * 0.065);
-    let to = sectionTop - topInset;
-
-    const bio = document.getElementById("bio-intro");
-    if (bio) {
-      const bioBottom = bio.getBoundingClientRect().bottom + window.scrollY;
-      to = Math.max(to, bioBottom + 20);
-    }
-
-    const productHeading = document.getElementById("product-carousel-heading");
-    if (productHeading) {
-      const productTop = productHeading.getBoundingClientRect().top + window.scrollY;
-      const maxTo = productTop - window.innerHeight - 12;
-      to = Math.min(to, maxTo);
-    }
-
-    const maxScroll = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
-    to = Math.min(maxScroll, Math.max(0, to));
-
-    if (Math.abs(to - window.scrollY) < 12) return;
-
-    scrollAnimRef.current?.stop();
-
-    if (prefersReducedMotion()) {
-      window.scrollTo(0, to);
-      return;
-    }
-
-    scrollAnimRef.current = animate(window.scrollY, to, {
-      duration: 1.25,
-      ease: [0.16, 1, 0.3, 1],
-      onUpdate: (latest) => {
-        window.scrollTo(0, latest);
-      },
+    scrollElementIntoCenter(section, {
+      reduceMotion: prefersReducedMotion(),
+      animRef: scrollAnimRef,
     });
   }, []);
 
@@ -499,6 +473,12 @@ export default function SocialCards({ cards }: SocialCardsProps) {
         >
           {cards.map((card, index) => {
             const isCenter = visibleSlots.get(index) === centerSlot;
+            const statusBarSrc =
+              card.statusBar === "white"
+                ? statusBarWhite
+                : card.statusBar === "black"
+                  ? statusBarBlack
+                  : null;
             const image = (
               <img
                 src={card.imgUrl}
@@ -508,14 +488,25 @@ export default function SocialCards({ cards }: SocialCardsProps) {
               />
             );
             const media = isCenter ? (
-              device === "iphone" ? (
-                <Iphone16Pro className="device-frame" src={card.imgUrl} />
-              ) : (
-                <>
-                  <div className="device-screen">{image}</div>
+              <>
+                <div className="device-screen">
+                  {image}
+                  {device === "iphone" && statusBarSrc ? (
+                    <img
+                      src={statusBarSrc}
+                      alt=""
+                      aria-hidden
+                      className="device-status-bar"
+                      draggable={false}
+                    />
+                  ) : null}
+                </div>
+                {device === "iphone" ? (
+                  <Iphone16Pro className="device-frame" />
+                ) : (
                   <Pixel10Pro className="device-frame" />
-                </>
-              )
+                )}
+              </>
             ) : (
               <div className="relative h-full w-full overflow-hidden rounded-[inherit]">{image}</div>
             );
@@ -544,7 +535,7 @@ export default function SocialCards({ cards }: SocialCardsProps) {
         aria-live="polite"
       >
         <AnimatePresence mode="wait">
-          {activeTitle && activeCard?.logoUrl ? (
+          {activeTitle ? (
             <motion.div
               key={`${centerIndex}-${device}`}
               initial={reduceTitleMotion ? false : { opacity: 0, y: 8 }}
@@ -553,12 +544,20 @@ export default function SocialCards({ cards }: SocialCardsProps) {
               transition={reduceTitleMotion ? { duration: 0 } : { duration: 0.28 }}
               className="flex w-full flex-col items-center"
             >
-              <AppStoreLogo
-                logoUrl={activeCard.logoUrl}
-                alt={activeCard.alt || activeTitle}
-                storeUrl={activeStoreUrl}
-              />
-              <h3 className="mt-2 text-center text-xl font-semibold tracking-tight">
+              {activeCard?.logoUrl ? (
+                <AppStoreLogo
+                  logoUrl={activeCard.logoUrl}
+                  alt={activeCard.alt || activeTitle}
+                  storeUrl={activeStoreUrl}
+                />
+              ) : null}
+              <h3
+                className={
+                  activeCard?.logoUrl
+                    ? "mt-2 text-center text-xl font-semibold tracking-tight"
+                    : "text-center text-xl font-semibold tracking-tight"
+                }
+              >
                 {activeTitle}
               </h3>
             </motion.div>

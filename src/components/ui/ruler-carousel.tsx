@@ -100,9 +100,10 @@ export function RulerCarousel({
 }) {
   const itemsPerSet = originalItems.length
   const infiniteItems = createInfiniteItems(originalItems)
-  const restIndex = Math.floor((infiniteItems.length - 1) / 2)
+  const restIndex = itemsPerSet
 
   const reduceMotion = useReducedMotion()
+  const rootRef = useRef<HTMLDivElement>(null)
   const containerRef = useRef<HTMLDivElement>(null)
   const trackRef = useRef<HTMLDivElement>(null)
   const [activeIndex, setActiveIndex] = useState(restIndex)
@@ -111,6 +112,8 @@ export function RulerCarousel({
   const [pointerRatio, setPointerRatio] = useState<number | null>(null)
   const [isPaused, setIsPaused] = useState(false)
   const [isCounterHovered, setIsCounterHovered] = useState(false)
+  const [isInView, setIsInView] = useState(false)
+  const [autoplayEpoch, setAutoplayEpoch] = useState(0)
 
   const updateTrackPosition = useCallback(() => {
     const container = containerRef.current
@@ -152,6 +155,7 @@ export function RulerCarousel({
     if (isResetting) return
 
     onInteract?.()
+    setAutoplayEpoch((epoch) => epoch + 1)
 
     const targetOriginalIndex = newIndex % itemsPerSet
     const possibleIndices = [
@@ -214,14 +218,29 @@ export function RulerCarousel({
   }, [activeIndex, itemsPerSet, isResetting])
 
   useEffect(() => {
-    if (reduceMotion || itemsPerSet < 2 || isPaused) return
+    const element = rootRef.current
+    if (!element) return
+
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        setIsInView(entry.isIntersecting)
+      },
+      { threshold: 0.35 },
+    )
+
+    observer.observe(element)
+    return () => observer.disconnect()
+  }, [])
+
+  useEffect(() => {
+    if (reduceMotion || itemsPerSet < 2 || isPaused || !isInView) return
 
     const interval = window.setInterval(() => {
       setActiveIndex((prev) => prev + 1)
     }, AUTOPLAY_INTERVAL)
 
     return () => window.clearInterval(interval)
-  }, [reduceMotion, itemsPerSet, isPaused])
+  }, [reduceMotion, itemsPerSet, isPaused, isInView, autoplayEpoch])
 
   if (!itemsPerSet) return null
 
@@ -234,7 +253,7 @@ export function RulerCarousel({
     : { duration: 0.22, ease: "easeOut" as const }
 
   return (
-    <div className="flex w-full flex-col items-center">
+    <div ref={rootRef} className="flex w-full flex-col items-center">
       <div
         className="ruler-carousel-fade relative w-full overflow-hidden"
         onPointerMove={handlePointerMove}
@@ -292,8 +311,17 @@ export function RulerCarousel({
                   rel="noopener noreferrer"
                   role="option"
                   aria-selected={isActive}
-                  aria-label={`${item.title} (opens in a new tab)`}
-                  onClick={() => handleItemActivate(index)}
+                  aria-label={
+                    isActive
+                      ? `${item.title} (opens in a new tab)`
+                      : `Center ${item.title}`
+                  }
+                  onClick={(event) => {
+                    if (!isActive) {
+                      event.preventDefault()
+                      handleItemActivate(index)
+                    }
+                  }}
                   className={cn(
                     "group relative flex h-20 w-44 shrink-0 cursor-pointer items-center justify-center whitespace-nowrap md:h-24 md:w-64",
                     isActive

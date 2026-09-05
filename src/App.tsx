@@ -1,50 +1,77 @@
 import { SiteHeader } from '@/components/common/site-header'
 import SocialCards from '@/components/ui/card-fan-carousel'
 import { BioIntro } from '@/sections/bio-intro'
-import { ProductCarousel } from '@/sections/product-carousel'
+import { Skills } from '@/sections/skills'
 import { Brands } from '@/sections/brands'
 import { Testimonials } from '@/sections/testimonials'
+import bindScreen from '@/assets/apps/bind.webp'
+import habitHeroScreen from '@/assets/apps/habit-hero.webp'
+import qinoScreen from '@/assets/apps/qino.webp'
+import sidenoteScreen from '@/assets/apps/sidenote.webp'
+import timelineScreen from '@/assets/apps/timeline.webp'
+import tradebaseScreen from '@/assets/apps/tradebase.webp'
+import trippinScreen from '@/assets/apps/trippin.webp'
 import bindLogo from '@/assets/logos/bind.png'
 import habitHeroLogo from '@/assets/logos/habit-hero.png'
 import qinoLogo from '@/assets/logos/qino.png'
+import sidenoteLogo from '@/assets/logos/sidenote.png'
 import tradebaseLogo from '@/assets/logos/tradebase.png'
 import trippinLogo from '@/assets/logos/trippin.png'
 
+/* Bind at index 3 so it rests in the center slot of the 7-card fan. */
 const DEMO_CARDS = [
   {
-    imgUrl: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?w=400&h=870&fit=crop',
+    imgUrl: habitHeroScreen,
+    alt: 'Habit Hero app',
+    title: 'Habit Hero',
+    logoUrl: habitHeroLogo,
+    iosStoreUrl: 'https://apps.apple.com/ma/app/habit-hero-daily-quests/id6751962274',
+    statusBar: 'black' as const,
+  },
+  {
+    imgUrl: tradebaseScreen,
+    alt: 'TradeBase app',
+    title: 'TradeBase',
+    logoUrl: tradebaseLogo,
+    iosStoreUrl: 'https://apps.apple.com/us/app/tradebase-find-trades-fast/id6753321961',
+    statusBar: 'white' as const,
+  },
+  {
+    imgUrl: trippinScreen,
     alt: "Trippin' app",
     title: "Trippin'",
     logoUrl: trippinLogo,
     iosStoreUrl: 'https://apps.apple.com/us/app/trippin-plan-trips-together/id6761880286',
     androidStoreUrl: 'https://play.google.com/store/apps/details?id=com.trippinai.app&hl=en',
+    statusBar: 'black' as const,
   },
   {
-    imgUrl: 'https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?w=400&h=870&fit=crop',
+    imgUrl: bindScreen,
     alt: 'Bind app',
     title: 'Bind',
     logoUrl: bindLogo,
+    statusBar: 'white' as const,
   },
   {
-    imgUrl: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?w=400&h=870&fit=crop',
-    alt: 'TradeBase app',
-    title: 'TradeBase',
-    logoUrl: tradebaseLogo,
-    iosStoreUrl: 'https://apps.apple.com/us/app/tradebase-find-trades-fast/id6753321961',
-  },
-  {
-    imgUrl: 'https://images.unsplash.com/photo-1519681393784-d120267933ba?w=400&h=870&fit=crop',
+    imgUrl: qinoScreen,
     alt: 'Qino app',
     title: 'Qino',
     logoUrl: qinoLogo,
     iosStoreUrl: 'https://apps.apple.com/us/app/cinema-movie-tickets-qino/id6741431128',
+    statusBar: 'black' as const,
   },
   {
-    imgUrl: 'https://images.unsplash.com/photo-1476820865390-c52aeebb9891?w=400&h=870&fit=crop',
-    alt: 'Habit Hero app',
-    title: 'Habit Hero',
-    logoUrl: habitHeroLogo,
-    iosStoreUrl: 'https://apps.apple.com/ma/app/habit-hero-daily-quests/id6751962274',
+    imgUrl: timelineScreen,
+    alt: 'Timeline app',
+    title: 'Timeline',
+    statusBar: 'white' as const,
+  },
+  {
+    imgUrl: sidenoteScreen,
+    alt: 'Sidenote app',
+    title: 'Sidenote',
+    logoUrl: sidenoteLogo,
+    statusBar: 'black' as const,
   },
 ]
 
@@ -57,7 +84,7 @@ function App() {
           <BioIntro />
           <SocialCards cards={DEMO_CARDS} />
         </section>
-        <ProductCarousel cards={DEMO_CARDS} />
+        <Skills />
         <Brands />
         <Testimonials />
       </div>

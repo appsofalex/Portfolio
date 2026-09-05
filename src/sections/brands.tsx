@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef } from "react"
-import { animate } from "motion"
+import { useReducedMotion } from "motion/react"
 
 import { RulerCarousel, type CarouselItem } from "@/components/ui/ruler-carousel"
+import { scrollElementIntoCenter } from "@/lib/programmatic-scroll"
 
 import airbnbLogo from "@/assets/logos/airbnb.svg"
 import amazonLogo from "@/assets/logos/amazon.svg"
@@ -28,53 +29,17 @@ const BRANDS: CarouselItem[] = [
 export function Brands() {
   const sectionRef = useRef<HTMLElement>(null)
   const scrollAnimRef = useRef<{ stop: () => void } | null>(null)
+  const reduceMotion = useReducedMotion()
 
   const scrollBrandsIntoView = useCallback(() => {
     const section = sectionRef.current
     if (!section) return
 
-    const rect = section.getBoundingClientRect()
-    const sectionTop = rect.top + window.scrollY
-    const sectionHeight = rect.height
-    let to = sectionTop + sectionHeight / 2 - window.innerHeight / 2
-
-    const bio = document.getElementById("bio-intro")
-    if (bio) {
-      const bioBottom = bio.getBoundingClientRect().bottom + window.scrollY
-      to = Math.max(to, bioBottom + 20)
-    }
-
-    const testimonialsHeading = document.getElementById("testimonials-heading")
-    if (testimonialsHeading) {
-      const testimonialsTop =
-        testimonialsHeading.getBoundingClientRect().top + window.scrollY
-      const maxTo = testimonialsTop - window.innerHeight - 12
-      to = Math.min(to, maxTo)
-    }
-
-    const maxScroll = Math.max(
-      0,
-      document.documentElement.scrollHeight - window.innerHeight,
-    )
-    to = Math.min(maxScroll, Math.max(0, to))
-
-    if (Math.abs(to - window.scrollY) < 12) return
-
-    scrollAnimRef.current?.stop()
-
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
-      window.scrollTo(0, to)
-      return
-    }
-
-    scrollAnimRef.current = animate(window.scrollY, to, {
-      duration: 1.25,
-      ease: [0.16, 1, 0.3, 1],
-      onUpdate: (latest) => {
-        window.scrollTo(0, latest)
-      },
+    scrollElementIntoCenter(section, {
+      reduceMotion: !!reduceMotion,
+      animRef: scrollAnimRef,
     })
-  }, [])
+  }, [reduceMotion])
 
   useEffect(() => {
     return () => scrollAnimRef.current?.stop()
@@ -82,6 +47,7 @@ export function Brands() {
 
   return (
     <section
+      id="brands"
       ref={sectionRef}
       aria-labelledby="brands-heading"
       className="relative z-10 w-full overflow-hidden pb-20 pt-8 md:pb-28 md:pt-12"

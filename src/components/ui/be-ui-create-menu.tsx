@@ -10,6 +10,8 @@ import {
   useState,
 } from "react"
 
+import { LocationMap } from "@/components/ui/expand-map"
+import { ScreenBlurBackdrop } from "@/components/ui/screen-blur-backdrop"
 import { ShimmerChrome } from "@/components/ui/shimmer-button"
 import { cn } from "@/lib/utils"
 
@@ -54,9 +56,9 @@ function XLogo({ className }: { className?: string }) {
 
 const ITEMS: MenuItem[] = [
   {
-    label: "@alexcrafted_",
+    label: "@imalexcrafted",
     icon: XLogo,
-    href: "https://x.com/alexcrafted_",
+    href: "https://x.com/imalexcrafted",
     external: true,
   },
   {
@@ -158,16 +160,26 @@ export function CreateMenu({
   }, [open])
 
   return (
-    <div
-      ref={ref}
-      className={cn("relative inline-flex flex-col items-end", className)}
-      onPointerEnter={(e) => {
-        if (e.pointerType === "mouse") openMenu()
-      }}
-      onPointerLeave={(e) => {
-        if (e.pointerType === "mouse") closeMenu(CLOSE_DELAY_MS)
-      }}
-    >
+    <>
+      <ScreenBlurBackdrop
+        open={open}
+        label="Close get in touch menu"
+        onDismiss={() => closeMenu()}
+      />
+
+      <div
+        ref={ref}
+        className={cn(
+          "relative z-50 inline-flex flex-col items-end",
+          className,
+        )}
+        onPointerEnter={(e) => {
+          if (e.pointerType === "mouse") openMenu()
+        }}
+        onPointerLeave={(e) => {
+          if (e.pointerType === "mouse") closeMenu(CLOSE_DELAY_MS)
+        }}
+      >
       <div
         ref={sizerRef}
         aria-hidden
@@ -285,9 +297,23 @@ export function CreateMenu({
                 </a>
               ))}
             </div>
+
+            <div className="flex justify-center border-t border-black/10 px-4 py-4 pb-5 dark:border-white/10">
+              <LocationMap
+                active={open}
+                location="London, UK"
+                coordinates="51.5074° N, 0.1278° W"
+                collapsedSize={{ width: 256, height: 120 }}
+                expandedSize={{ width: 256, height: 220 }}
+                tabIndex={open ? 0 : -1}
+                showHint={false}
+                autoExpandDelayMs={500}
+              />
+            </div>
           </div>
         </div>
       </motion.div>
-    </div>
+      </div>
+    </>
   )
 }

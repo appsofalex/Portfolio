@@ -10,7 +10,7 @@ const TESTIMONIALS: UniqueTestimonial[] = [
   {
     id: 1,
     quote:
-      "He has a sharp eye for what matters, a strong point of view, and the ability to turn messy ideas into features that feel obvious in hindsight.",
+      "He has a sharp eye for what matters and the ability to turn messy ideas into features that feel obvious in hindsight.",
     author: "Jaimin Kataria",
     role: "Cofounder at Appllama",
     avatar: jaiminKatariaAvatar,

@@ -89,6 +89,16 @@
   object-position: center;
 }
 
+.fan-layout--android .fan-card img {
+  /* Close hairline gap under the Android bezel */
+  top: -0.5px;
+}
+
+.fan-layout--android .fan-card img.fan-card-img--android-stretch {
+  /* TradeBase / Bind / Qino / Timeline are 1px short; stretch to seal edges */
+  height: calc(100% + 1px);
+}
+
 .fan-card img.device-status-bar {
   top: 1px;
   left: 0;

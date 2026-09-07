@@ -15,6 +15,7 @@ import bindLogo from '@/assets/logos/bind.png'
 import habitHeroLogo from '@/assets/logos/habit-hero.png'
 import qinoLogo from '@/assets/logos/qino.png'
 import sidenoteLogo from '@/assets/logos/sidenote.png'
+import timelineLogo from '@/assets/logos/timeline.png'
 import tradebaseLogo from '@/assets/logos/tradebase.png'
 import trippinLogo from '@/assets/logos/trippin.png'
 
@@ -64,6 +65,7 @@ const DEMO_CARDS = [
     imgUrl: timelineScreen,
     alt: 'Timeline app',
     title: 'Timeline',
+    logoUrl: timelineLogo,
     statusBar: 'white' as const,
   },
   {

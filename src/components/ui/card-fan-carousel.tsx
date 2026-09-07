@@ -529,12 +529,19 @@ export default function SocialCards({ cards }: SocialCardsProps) {
                 : card.statusBar === "black"
                   ? statusBarBlack
                   : null;
+            const androidStretch =
+              card.title === "TradeBase" ||
+              card.title === "Bind" ||
+              card.title === "Qino" ||
+              card.title === "Timeline";
             const image = (
               <img
                 src={card.imgUrl}
                 loading="lazy"
                 alt={card.alt || card.title || `Card ${index}`}
-                className="absolute inset-0 w-full h-full object-cover"
+                className={`absolute inset-0 w-full h-full object-cover${
+                  androidStretch ? " fan-card-img--android-stretch" : ""
+                }`}
               />
             );
             const media = isCenter ? (

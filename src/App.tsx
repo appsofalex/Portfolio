@@ -41,7 +41,7 @@ const DEMO_CARDS = [
     alt: "Trippin' app",
     title: "Trippin'",
     logoUrl: trippinLogo,
-    iosStoreUrl: 'https://apps.apple.com/us/app/trippin-plan-trips-together/id6761880286',
+    iosStoreUrl: 'https://apps.apple.com/gb/app/trippin-plan-trips-together/id6761880286',
     androidStoreUrl: 'https://play.google.com/store/apps/details?id=com.trippinai.app&hl=en',
     statusBar: 'black' as const,
   },

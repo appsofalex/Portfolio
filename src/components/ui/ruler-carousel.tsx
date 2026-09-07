@@ -269,7 +269,7 @@ export function RulerCarousel({
           ref={containerRef}
           tabIndex={0}
           role="listbox"
-          aria-label="Brands"
+          aria-label="Good Company"
           aria-activedescendant={`brand-item-${activeIndex}`}
           onKeyDown={(event) => {
             if (isResetting) return

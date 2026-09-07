@@ -10,10 +10,10 @@ import { scrollElementIntoCenter } from "@/lib/programmatic-scroll"
 import { cn } from "@/lib/utils"
 
 const NAV_ITEMS = [
-  { id: "my-work", label: "My work" },
-  { id: "my-skills", label: "My skills" },
-  { id: "brands", label: "Brands" },
-  { id: "testimonials", label: "Testimonials" },
+  { id: "my-work", label: "Things I've made" },
+  { id: "my-skills", label: "What I do" },
+  { id: "brands", label: "Good Company" },
+  { id: "testimonials", label: "People I've built with" },
 ] as const
 
 type NavItemId = (typeof NAV_ITEMS)[number]["id"]

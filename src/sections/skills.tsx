@@ -34,7 +34,7 @@ export function Skills() {
         id="skills-heading"
         className="mb-8 text-center text-sm font-semibold tracking-[0.2em] text-foreground/50 uppercase md:mb-12"
       >
-        My skills
+        What I do
       </h2>
 
       <ProjectShowcase onInteract={scrollSkillsIntoView} />

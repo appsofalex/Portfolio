@@ -10,6 +10,10 @@ import engineeringImage from "@/assets/skills/engineering-preview.jpg"
 import engineeringImageFull from "@/assets/skills/engineering.jpg"
 import mobileAppsImage from "@/assets/skills/mobile-apps-preview.jpg"
 import mobileAppsImageFull from "@/assets/skills/mobile-apps.jpg"
+import motionInteractionImage from "@/assets/skills/motion-interaction-preview-poster.jpg"
+import motionInteractionImageFull from "@/assets/skills/motion-interaction-poster.jpg"
+import motionInteractionVideo from "@/assets/skills/motion-interaction-preview.mp4"
+import motionInteractionVideoFull from "@/assets/skills/motion-interaction.mp4"
 import productDesignImage from "@/assets/skills/product-design-preview.jpg"
 import productDesignImageFull from "@/assets/skills/product-design.jpg"
 
@@ -18,10 +22,14 @@ export interface ShowcaseItem {
   description: string
   year: string
   link: string
-  /** Lightweight hover preview. */
+  /** Lightweight hover preview (poster / still). */
   image: string
   /** Full-resolution source for the expanded lightbox. Defaults to `image`. */
   imageFull?: string
+  /** Optional muted loop for hover. Falls back to `image` when reduced-motion. */
+  video?: string
+  /** Optional muted loop for expanded view. Defaults to `video`. */
+  videoFull?: string
 }
 
 type HotspotRect = {
@@ -74,10 +82,10 @@ const DEFAULT_SKILLS: ShowcaseItem[] = [
     description: "Micro-animation and tactile feedback that earns its place.",
     year: "UX",
     link: "#my-skills",
-    image:
-      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=640&h=400&fit=crop&q=70&auto=format",
-    imageFull:
-      "https://images.unsplash.com/photo-1550745165-9bc0b252726f?w=2400&h=1500&fit=crop&q=90&auto=format",
+    image: motionInteractionImage,
+    imageFull: motionInteractionImageFull,
+    video: motionInteractionVideo,
+    videoFull: motionInteractionVideoFull,
   },
 ]
 
@@ -104,9 +112,15 @@ export function ProjectShowcase({
   const containerRef = useRef<HTMLDivElement>(null)
   const animationRef = useRef<number | null>(null)
   const audioRef = useRef<HTMLAudioElement | null>(null)
+  const hoverVideoRefs = useRef<Map<number, HTMLVideoElement>>(new Map())
+  const expandedVideoRef = useRef<HTMLVideoElement | null>(null)
   const reduceMotion = useReducedMotion()
   const expanded = expandedIndex !== null ? items[expandedIndex] : null
   const showProductMusic = expanded?.title === PRODUCT_DESIGN_MUSIC.title
+  const expandedVideo =
+    !reduceMotion && expanded
+      ? (expanded.videoFull ?? expanded.video)
+      : undefined
 
   useEffect(() => {
     if (reduceMotion) {
@@ -193,12 +207,45 @@ export function ProjectShowcase({
   useEffect(() => {
     if (hoveredIndex === null) return
     const item = items[hoveredIndex]
+    const fullVideo = item?.videoFull ?? item?.video
+    if (fullVideo && !reduceMotion) {
+      const preload = document.createElement("video")
+      preload.preload = "auto"
+      preload.muted = true
+      preload.playsInline = true
+      preload.src = fullVideo
+      return
+    }
     const full = item?.imageFull ?? item?.image
     if (!full) return
     const preload = new Image()
     preload.decoding = "async"
     preload.src = full
-  }, [hoveredIndex, items])
+  }, [hoveredIndex, items, reduceMotion])
+
+  // Play / pause hover preview videos with the cursor.
+  useEffect(() => {
+    hoverVideoRefs.current.forEach((video, index) => {
+      if (reduceMotion || hoveredIndex !== index || expandedIndex !== null) {
+        video.pause()
+        return
+      }
+      void video.play().catch(() => {
+        // Autoplay policies — fail silently; poster still shows.
+      })
+    })
+  }, [hoveredIndex, expandedIndex, reduceMotion])
+
+  // Autoplay expanded video when the lightbox opens.
+  useEffect(() => {
+    const video = expandedVideoRef.current
+    if (!video || !expandedVideo) return
+    video.currentTime = 0
+    void video.play().catch(() => {})
+    return () => {
+      video.pause()
+    }
+  }, [expandedVideo, expandedIndex])
 
   const handleMouseMove = (e: MouseEvent) => {
     if (!containerRef.current || expandedIndex !== null) return
@@ -272,19 +319,43 @@ export function ProjectShowcase({
         }}
       >
         <div className="relative h-[180px] w-[280px] overflow-hidden rounded-xl bg-foreground/5">
-          {items.map((item, index) => (
-            <img
-              key={item.title}
-              src={item.image}
-              alt=""
-              className="absolute inset-0 h-full w-full object-cover transition-all duration-500 ease-out motion-reduce:transition-none"
-              style={{
-                opacity: hoveredIndex === index ? 1 : 0,
-                scale: hoveredIndex === index ? 1 : 1.1,
-                filter: hoveredIndex === index ? "none" : "blur(10px)",
-              }}
-            />
-          ))}
+          {items.map((item, index) => {
+            const showVideo = Boolean(item.video) && !reduceMotion
+            const mediaClassName =
+              "absolute inset-0 h-full w-full object-cover transition-all duration-500 ease-out motion-reduce:transition-none"
+            const mediaStyle = {
+              opacity: hoveredIndex === index ? 1 : 0,
+              scale: hoveredIndex === index ? 1 : 1.1,
+              filter: hoveredIndex === index ? "none" : "blur(10px)",
+            }
+
+            return showVideo ? (
+              <video
+                key={item.title}
+                ref={(node) => {
+                  if (node) hoverVideoRefs.current.set(index, node)
+                  else hoverVideoRefs.current.delete(index)
+                }}
+                src={item.video}
+                poster={item.image}
+                muted
+                loop
+                playsInline
+                preload="metadata"
+                aria-hidden
+                className={mediaClassName}
+                style={mediaStyle}
+              />
+            ) : (
+              <img
+                key={item.title}
+                src={item.image}
+                alt=""
+                className={mediaClassName}
+                style={mediaStyle}
+              />
+            )
+          })}
           <div className="absolute inset-0 bg-gradient-to-t from-background/20 to-transparent" />
         </div>
       </div>
@@ -411,14 +482,30 @@ export function ProjectShowcase({
                     }
                   >
                     <div className="relative">
-                      <img
-                        src={expanded.imageFull ?? expanded.image}
-                        alt={expanded.title}
-                        decoding="async"
-                        fetchPriority="high"
-                        sizes="(max-width: 768px) 96vw, min(46.8rem, 96vw)"
-                        className="aspect-[16/10] w-full rounded-xl object-cover"
-                      />
+                      {expandedVideo ? (
+                        <video
+                          ref={expandedVideoRef}
+                          key={expandedVideo}
+                          src={expandedVideo}
+                          poster={expanded.imageFull ?? expanded.image}
+                          muted
+                          loop
+                          playsInline
+                          autoPlay
+                          preload="auto"
+                          aria-label={expanded.title}
+                          className="aspect-[16/10] w-full rounded-xl object-cover"
+                        />
+                      ) : (
+                        <img
+                          src={expanded.imageFull ?? expanded.image}
+                          alt={expanded.title}
+                          decoding="async"
+                          fetchPriority="high"
+                          sizes="(max-width: 768px) 96vw, min(46.8rem, 96vw)"
+                          className="aspect-[16/10] w-full rounded-xl object-cover"
+                        />
+                      )}
 
                       {showProductMusic &&
                         PRODUCT_DESIGN_MUSIC.spots.map((spot, index) => (

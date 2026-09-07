@@ -57,7 +57,7 @@ export function Brands() {
           id="brands-heading"
           className="text-sm font-semibold tracking-[0.2em] text-foreground/50 uppercase"
         >
-          Brands
+          Good Company
         </h2>
         <p className="mt-3 text-sm font-normal text-foreground/45">
           (some I've worked for, some I'd love to work for... guess which is

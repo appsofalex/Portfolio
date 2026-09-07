@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from "react"
+import { ChevronLeft, ChevronRight } from "lucide-react"
 import { useReducedMotion } from "motion/react"
 
+import { ShimmerButton } from "@/components/ui/shimmer-button"
 import { scrollElementIntoCenter } from "@/lib/programmatic-scroll"
 import { cn } from "@/lib/utils"
 
@@ -88,6 +90,16 @@ export function UniqueTestimonials({
     }, 200)
   }
 
+  const cycle = (direction: "left" | "right") => {
+    const count = testimonials.length
+    if (count < 2) return
+    const nextIndex =
+      direction === "right"
+        ? (activeIndex + 1) % count
+        : (activeIndex - 1 + count) % count
+    handleSelect(nextIndex)
+  }
+
   if (!testimonials.length) return null
 
   return (
@@ -133,76 +145,102 @@ export function UniqueTestimonials({
           {displayedRole}
         </p>
 
-        <div
-          className="flex items-center justify-center gap-2"
-          role="tablist"
-          aria-label="Testimonials"
-        >
-          {testimonials.map((testimonial, index) => {
-            const isActive = activeIndex === index
-            const isHovered = hoveredIndex === index && !isActive
-            const showName = isActive || isHovered
+        <div className="flex items-center justify-center gap-3">
+          {testimonials.length > 1 && (
+            <ShimmerButton
+              type="button"
+              aria-label="Previous person"
+              shimmer={false}
+              onClick={() => cycle("left")}
+              className="size-12 shrink-0 px-0 py-0"
+            >
+              <ChevronLeft className="relative z-[1] size-5" strokeWidth={2} />
+            </ShimmerButton>
+          )}
 
-            return (
-              <button
-                key={testimonial.id}
-                type="button"
-                role="tab"
-                aria-selected={isActive}
-                aria-label={`${testimonial.author}, ${testimonial.role}`}
-                onClick={() => handleSelect(index)}
-                onMouseEnter={() => setHoveredIndex(index)}
-                onMouseLeave={() => setHoveredIndex(null)}
-                className={cn(
-                  "relative flex cursor-pointer items-center gap-0 rounded-full outline-none",
-                  "focus-visible:ring-2 focus-visible:ring-foreground/40",
-                  "transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none",
-                  isActive
-                    ? "bg-foreground"
-                    : "bg-transparent hover:bg-foreground/5",
-                  showName ? "py-2 pr-4 pl-2" : "p-0.5",
-                )}
-              >
-                <div className="relative shrink-0">
-                  <img
-                    src={testimonial.avatar}
-                    alt=""
-                    width={32}
-                    height={32}
-                    draggable={false}
-                    className={cn(
-                      "h-8 w-8 rounded-full object-cover",
-                      "transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none",
-                      isActive ? "ring-2 ring-background/30" : "ring-0",
-                      !isActive &&
-                        "hover:scale-105 motion-reduce:hover:scale-100",
-                    )}
-                  />
-                </div>
+          <div
+            className="flex items-center justify-center gap-2"
+            role="tablist"
+            aria-label="People I've built with"
+          >
+            {testimonials.map((testimonial, index) => {
+              const isActive = activeIndex === index
+              const isHovered = hoveredIndex === index && !isActive
+              const showName = isActive || isHovered
 
-                <div
+              return (
+                <button
+                  key={testimonial.id}
+                  type="button"
+                  role="tab"
+                  aria-selected={isActive}
+                  aria-label={`${testimonial.author}, ${testimonial.role}`}
+                  onClick={() => handleSelect(index)}
+                  onMouseEnter={() => setHoveredIndex(index)}
+                  onMouseLeave={() => setHoveredIndex(null)}
                   className={cn(
-                    "grid transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none",
-                    showName
-                      ? "ml-2 grid-cols-[1fr] opacity-100"
-                      : "ml-0 grid-cols-[0fr] opacity-0",
+                    "relative flex cursor-pointer items-center gap-0 rounded-full outline-none",
+                    "focus-visible:ring-2 focus-visible:ring-foreground/40",
+                    "transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none",
+                    isActive
+                      ? "bg-foreground"
+                      : "bg-transparent hover:bg-foreground/5",
+                    showName ? "py-2 pr-4 pl-2" : "p-0.5",
                   )}
                 >
-                  <div className="overflow-hidden">
-                    <span
+                  <div className="relative shrink-0">
+                    <img
+                      src={testimonial.avatar}
+                      alt=""
+                      width={32}
+                      height={32}
+                      draggable={false}
                       className={cn(
-                        "block text-sm font-medium whitespace-nowrap",
-                        "transition-colors duration-300 motion-reduce:transition-none",
-                        isActive ? "text-background" : "text-foreground",
+                        "h-8 w-8 rounded-full object-cover",
+                        "transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none",
+                        isActive ? "ring-2 ring-background/30" : "ring-0",
+                        !isActive &&
+                          "hover:scale-105 motion-reduce:hover:scale-100",
                       )}
-                    >
-                      {testimonial.author}
-                    </span>
+                    />
                   </div>
-                </div>
-              </button>
-            )
-          })}
+
+                  <div
+                    className={cn(
+                      "grid transition-all duration-500 ease-[cubic-bezier(0.4,0,0.2,1)] motion-reduce:transition-none",
+                      showName
+                        ? "ml-2 grid-cols-[1fr] opacity-100"
+                        : "ml-0 grid-cols-[0fr] opacity-0",
+                    )}
+                  >
+                    <div className="overflow-hidden">
+                      <span
+                        className={cn(
+                          "block text-sm font-medium whitespace-nowrap",
+                          "transition-colors duration-300 motion-reduce:transition-none",
+                          isActive ? "text-background" : "text-foreground",
+                        )}
+                      >
+                        {testimonial.author}
+                      </span>
+                    </div>
+                  </div>
+                </button>
+              )
+            })}
+          </div>
+
+          {testimonials.length > 1 && (
+            <ShimmerButton
+              type="button"
+              aria-label="Next person"
+              shimmer={false}
+              onClick={() => cycle("right")}
+              className="size-12 shrink-0 px-0 py-0"
+            >
+              <ChevronRight className="relative z-[1] size-5" strokeWidth={2} />
+            </ShimmerButton>
+          )}
         </div>
       </div>
     </div>

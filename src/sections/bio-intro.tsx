@@ -232,7 +232,7 @@ export function BioIntro() {
       transition={{ duration: 0.8 }}
       className="w-full pt-24 sm:pt-28"
     >
-      <h1 className="text-xl font-semibold tracking-tight">Alex Walters</h1>
+      <h1 className="text-xl font-semibold tracking-tight">Alexander Walters</h1>
       <p className="mt-1 text-base font-normal text-foreground/50">
         App Developer &amp; Designer
       </p>

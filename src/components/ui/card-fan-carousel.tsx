@@ -161,6 +161,56 @@ export default function SocialCards({ cards }: SocialCardsProps) {
 
   cycleRef.current = cycle;
 
+  // Auto-advance right every 3s using the same path as the next control / adjacent click.
+  useEffect(() => {
+    if (!canCycle) return;
+
+    let timeout: ReturnType<typeof setTimeout> | null = null;
+    let readyPoll: ReturnType<typeof setInterval> | null = null;
+
+    const clear = () => {
+      if (timeout) clearTimeout(timeout);
+      timeout = null;
+    };
+
+    const schedule = () => {
+      clear();
+      timeout = setTimeout(function tick() {
+        if (document.hidden || !hasEntered.current || isAnimating.current) {
+          timeout = setTimeout(tick, 150);
+          return;
+        }
+        cycleRef.current("right");
+      }, 3000);
+    };
+
+    if (hasEntered.current) {
+      schedule();
+    } else {
+      readyPoll = setInterval(() => {
+        if (!hasEntered.current) return;
+        if (readyPoll) clearInterval(readyPoll);
+        readyPoll = null;
+        schedule();
+      }, 100);
+    }
+
+    const onVisibility = () => {
+      if (document.hidden) {
+        clear();
+        return;
+      }
+      if (hasEntered.current) schedule();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
+    return () => {
+      clear();
+      if (readyPoll) clearInterval(readyPoll);
+      document.removeEventListener("visibilitychange", onVisibility);
+    };
+  }, [canCycle, centerIndex]);
+
   useEffect(() => {
     const container = containerRef.current;
     if (!container || !totalCards) return;
@@ -463,7 +513,7 @@ export default function SocialCards({ cards }: SocialCardsProps) {
         id="my-work-heading"
         className="mb-2 text-center text-sm font-semibold tracking-[0.2em] text-foreground/50 uppercase md:mb-3"
       >
-        My work
+        Things I've made
       </h2>
 
       <div className="flex w-full items-center justify-center">
@@ -575,7 +625,7 @@ export default function SocialCards({ cards }: SocialCardsProps) {
               scrollFanIntoView();
               cycle("left");
             }}
-            className="size-11 shrink-0 px-0 py-0"
+            className="size-12 shrink-0 px-0 py-0"
           >
             <ChevronLeft className="relative z-[1] size-5" strokeWidth={2} />
           </ShimmerButton>
@@ -596,7 +646,7 @@ export default function SocialCards({ cards }: SocialCardsProps) {
               scrollFanIntoView();
               cycle("right");
             }}
-            className="size-11 shrink-0 px-0 py-0"
+            className="size-12 shrink-0 px-0 py-0"
           >
             <ChevronRight className="relative z-[1] size-5" strokeWidth={2} />
           </ShimmerButton>

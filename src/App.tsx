@@ -73,6 +73,7 @@ const DEMO_CARDS = [
     alt: 'Sidenote app',
     title: 'Sidenote',
     logoUrl: sidenoteLogo,
+    iosStoreUrl: 'https://apps.apple.com/us/app/sidenote-easy-notes/id6804848208',
     statusBar: 'black' as const,
   },
 ]

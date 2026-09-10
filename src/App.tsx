@@ -26,7 +26,7 @@ const DEMO_CARDS = [
     alt: 'Habit Hero app',
     title: 'Habit Hero',
     logoUrl: habitHeroLogo,
-    iosStoreUrl: 'https://apps.apple.com/ma/app/habit-hero-daily-quests/id6751962274',
+    iosStoreUrl: 'https://apps.apple.com/us/app/habit-hero-daily-quests/id6751962274',
     statusBar: 'black' as const,
   },
   {
@@ -42,7 +42,7 @@ const DEMO_CARDS = [
     alt: "Trippin' app",
     title: "Trippin'",
     logoUrl: trippinLogo,
-    iosStoreUrl: 'https://apps.apple.com/gb/app/trippin-plan-trips-together/id6761880286',
+    iosStoreUrl: 'https://apps.apple.com/us/app/trippin-plan-trips-together/id6761880286',
     androidStoreUrl: 'https://play.google.com/store/apps/details?id=com.trippinai.app&hl=en',
     statusBar: 'black' as const,
   },

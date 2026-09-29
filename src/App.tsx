@@ -51,6 +51,7 @@ const DEMO_CARDS = [
     alt: 'Bind app',
     title: 'Bind',
     logoUrl: bindLogo,
+    iosStoreUrl: 'https://apps.apple.com/us/app/bind-secure-document-vault/id6759533246',
     statusBar: 'white' as const,
   },
   {

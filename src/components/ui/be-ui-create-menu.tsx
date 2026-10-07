@@ -64,7 +64,7 @@ const ITEMS: MenuItem[] = [
   {
     label: "Email",
     icon: Mail,
-    href: "mailto:alexwalters148@gmail.com",
+    href: "mailto:info@alex-crafted.com",
   },
 ]
 
